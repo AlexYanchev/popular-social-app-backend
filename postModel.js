@@ -7,5 +7,5 @@ const postsModel = mongoose.Schema({
   timestamp: String,
 });
 
-const Posts = mongoose.model('posts', postsModel);
+const Posts = mongoose.model('socialPosts', postsModel);
 export default Posts;

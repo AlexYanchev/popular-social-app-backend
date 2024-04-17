@@ -33,6 +33,10 @@ connection.once('open', () => {
   const gfs = Grid(connection.db, mongoose.mongo);
   console.log('DB Connected');
   gfs.collection('images');
+  var admin = new mongoose.mongo.Admin(mongoose.connection.db);
+  admin.buildInfo(function (err, info) {
+    console.log(info.version);
+  });
 });
 
 const storage = new GridFsStorage({
@@ -55,7 +59,7 @@ changeStream.on('change', (change) => {
   if (change.operationType === 'insert') {
     const messageDetails = change.fullDocument;
     console.log(messageDetails);
-    pusher.trigger('posts', 'inserted', {
+    pusher.trigger('socialPosts', 'inserted', {
       change: change,
     });
   } else {
@@ -101,21 +105,21 @@ app.post('/upload/post', (req, res) => {
   const dbPost = req.body;
   Posts.create(dbPost)
     .then((r) => {
-      res.status(201).send(data);
+      res.status(201).send(r);
     })
     .catch((e) => {
-      res.status(500).send(err);
+      res.status(500).send(e);
     });
 });
 
 app.get('/posts', (req, res) => {
   Posts.find()
     .then((r) => {
-      data.sort((b, a) => a.timestamp - b.timestamp);
-      res.status(201).send(data);
+      r.sort((b, a) => a.timestamp - b.timestamp);
+      res.status(201).send(r);
     })
     .catch((e) => {
-      res.status(500).send(err);
+      res.status(500).send(e);
     });
 });
 
