@@ -1,10 +1,9 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import Messages from './dbMessages.js';
 import * as dotenv from 'dotenv';
 import Pusher from 'pusher';
 import multer from 'multer';
-import GridFsStorage from 'multer-gridfs-storage';
+import { GridFsStorage } from 'multer-gridfs-storage';
 import Grid from 'gridfs-stream';
 import bodyParser from 'body-parser';
 import path from 'path';
@@ -30,9 +29,8 @@ const connection = mongoose.createConnection(connection_url);
 
 mongoose.connect(connection_url);
 
-const gfs = Grid(connection.db, mongoose.mongo);
-
 connection.once('open', () => {
+  const gfs = Grid(connection.db, mongoose.mongo);
   console.log('DB Connected');
   gfs.collection('images');
 });
@@ -50,7 +48,7 @@ const storage = new GridFsStorage({
 
 const upload = multer({ storage });
 
-const changeStream = Messages.watch();
+const changeStream = Posts.watch();
 
 changeStream.on('change', (change) => {
   console.log(change);
